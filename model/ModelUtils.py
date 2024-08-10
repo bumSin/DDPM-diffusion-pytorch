@@ -6,6 +6,7 @@ from einops import reduce
 import torch.nn.functional as F
 
 
+# conv layer with weight standardisation incorporated
 class WeightStandardizedConv2d(nn.Conv2d):
     # no need to override init, we will just override forward
 
