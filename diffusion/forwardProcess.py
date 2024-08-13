@@ -39,3 +39,4 @@ def get_noisy_image(x_start, t):
     noisy_image = reverse_transform(x_noisy.squeeze())
 
     return noisy_image
+
