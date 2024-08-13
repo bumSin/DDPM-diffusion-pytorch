@@ -17,7 +17,7 @@ from functools import partial
 import torch
 from einops import rearrange
 from torch import nn
-from Utils import WeightStandardizedConv2d, exists, default, getSequnceOfDimensions, \
+from Utils.ModelUtils import WeightStandardizedConv2d, exists, default, getSequnceOfDimensions, \
     SinusoidalPositionEmbeddings, PreNorm, LinearAttention, Residual, Downsample, Attention, Upsample
 
 
