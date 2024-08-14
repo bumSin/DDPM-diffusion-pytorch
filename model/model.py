@@ -23,10 +23,10 @@ from Utils.ModelUtils import WeightStandardizedConv2d, exists, default, getSequn
 
 # Most basic block with conv + groupNorm + Silu activation
 class Block(nn.Module):
-    def __init__(self, dim_in, dim_out, groups_count=8):
+    def __init__(self, dim, dim_out, groups=8):
         super().__init__()
-        self.proj = WeightStandardizedConv2d(dim_in, dim_out, 3, 1)
-        self.norm = nn.GroupNorm(groups_count, dim_out)
+        self.proj = WeightStandardizedConv2d(dim, dim_out, 3, padding=1)
+        self.norm = nn.GroupNorm(groups, dim_out)
         self.act = nn.SiLU()
 
     def forward(self, x, scale_shift=None):
@@ -43,37 +43,35 @@ class Block(nn.Module):
 
 # The residual block
 class ResnetBlock(nn.Module):
-    def __init__(self, dim_in, dim_out, time_emb_dim, groups=8):
+    """https://arxiv.org/abs/1512.03385"""
+
+    def __init__(self, dim, dim_out, *, time_emb_dim=None, groups=8):
         super().__init__()
-
-        self.block1 = Block(dim_in, dim_out, groups)
-        self.block2 = Block(dim_out, dim_out, groups)
-
-        self.res_conv = nn.Conv2d(dim_in, dim_out, 1) if dim_out != dim_in else nn.Identity()
-
-        self.mlp = nn.Sequential(
-            nn.SiLU(), nn.Linear(time_emb_dim, dim_out * 2) if exists(time_emb_dim)
+        self.mlp = (
+            nn.Sequential(nn.SiLU(), nn.Linear(time_emb_dim, dim_out * 2))
+            if exists(time_emb_dim)
             else None
         )
 
+        self.block1 = Block(dim, dim_out, groups=groups)
+        self.block2 = Block(dim_out, dim_out, groups=groups)
+        self.res_conv = nn.Conv2d(dim, dim_out, 1) if dim != dim_out else nn.Identity()
+
     def forward(self, x, time_emb=None):
         scale_shift = None
-
         if exists(self.mlp) and exists(time_emb):
             time_emb = self.mlp(time_emb)
             time_emb = rearrange(time_emb, "b c -> b c 1 1")
-            scale_shift = time_emb.chunk(2, dim=1)  # break along channel dim in half, from dim_out * 2 to dim_out
+            scale_shift = time_emb.chunk(2, dim=1)
 
-        h = self.block1(x, scale_shift)
+        h = self.block1(x, scale_shift=scale_shift)
         h = self.block2(h)
-        h = h + self.res_conv(x)
-
-        return h
+        return h + self.res_conv(x)
 
 
 class Unet(nn.Module):
     def __init__(self,
-                 dim,               # dimension of time embedding
+                 dim,
                  init_dim=None,
                  out_dim=None,      # channels of final output image
                  dim_mults=(1, 2, 4, 8),
