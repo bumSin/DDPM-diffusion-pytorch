@@ -50,3 +50,21 @@ def get_tensor_to_image_transform():
     ])
 
     return reverse_transform
+
+def saveImage(image, image_size, epoch, step, results_folder):
+    # Convert the image tensor to a format suitable for saving
+    # Extract the first image (batch=1), channel=1 and reshape
+    image_array = image[0][0].reshape(image_size, image_size)
+
+    # Convert to the range [0, 255] for saving as an image
+    image_array = (image_array - image_array.min()) / (image_array.max() - image_array.min()) * 255
+    image_array = image_array.astype('uint8')
+
+    # Create a PIL Image from the NumPy array and save as PNG
+    image = Image.fromarray(image_array)
+
+    # Define the full path including the directory and file name
+    save_path = os.path.join(results_folder, f"epoch_{epoch}_step_{step}.png")
+
+    # Save the image as a PNG file in the specified directory
+    image.save(save_path)

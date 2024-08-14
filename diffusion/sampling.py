@@ -36,7 +36,7 @@ def p_sample(model, x, t, t_index):
 
 
 @torch.no_grad()
-def p_sample_loop(model, shape):
+def p_sample_loop(model, shape, timesteps):
     device = next(model.parameters()).device
 
     b = shape[0]
@@ -51,5 +51,5 @@ def p_sample_loop(model, shape):
 
 
 @torch.no_grad()
-def sample(model, image_size, batch_size=16, channels=3):
-    return p_sample_loop(model, shape=(batch_size, channels, image_size, image_size))
+def sample(model, image_size, batch_size=16, channels=3, timesteps=300):
+    return p_sample_loop(model, shape=(batch_size, channels, image_size, image_size), timesteps=timesteps)
