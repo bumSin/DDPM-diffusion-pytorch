@@ -7,10 +7,6 @@ Table of Contents
 	•	Introduction
 	•	Background on DDPM
 	•	Implementation Details
-	•	Usage
-	•	Interesting Facts
-	•	Contributing
-	•	License
 
 Introduction
 
