@@ -1,6 +1,7 @@
 # Denoising Diffusion Probabilistic Models (DDPM) Implementation from Scratch in Pytorch
 
 Welcome to the DDPM Implementation repository! This repository contains a comprehensive implementation of Denoising Diffusion Probabilistic Models (DDPM) from scratch. This implementation is inspired by the Hugging Face’s DDPM implementation and aims to provide an in-depth understanding of the model’s architecture and functionality.
+More details can be found in this blog --> https://medium.com/@shubham.ksingh.cer14/diffusion-models-from-scratch-in-pytorch-cb6d349c14be
 
 Table of Contents
 
@@ -48,11 +49,3 @@ This implementation includes the following components:
 	•	Model Definition: Neural network architecture for noise estimation.
 	•	Training Loop: Procedures for training the model on the dataset.
 	•	Sampling Algorithm: Code to generate samples from the trained model.
-
-
-
-
-
-
-## References
-1. https://huggingface.co/blog/annotated-diffusion
